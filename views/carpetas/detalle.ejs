@@ -1,0 +1,46 @@
+<%- include('../partials/head', { title: carpeta.nombre }) %>
+    <%- include('../partials/navbar') %>
+        <main class="container">
+
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <%= carpeta.nombre %>
+                    </h1>
+
+                    <p>
+                        Repositorio:
+                        <strong>
+                            <%= carpeta.nombre_repositorio %>
+                        </strong>
+                    </p>
+                </div>
+            </div>
+
+            <% if (carpeta.descripcion) { %>
+                <div class="card">
+                    <h2>Descripción</h2>
+                    <p>
+                        <%= carpeta.descripcion %>
+                    </p>
+                </div>
+                <% } %>
+
+                    <div class="card">
+                        <h2>Documentos</h2>
+
+                        <p>
+                            Aquí aparecerán los documentos almacenados
+                            en esta carpeta.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <a href="/repositorios/<%= carpeta.id_repositorio %>" class="btn btn-secondary">
+                            Volver al repositorio
+                        </a>
+                    </div>
+
+        </main>
+
+        <%- include('../partials/footer') %>

@@ -1,0 +1,111 @@
+<%- include('../partials/head', { title: repositorio.nombre }) %>
+    <%- include('../partials/navbar') %>
+
+        <main class="container">
+
+            <div class="page-header">
+
+                <div>
+                    <h1>
+                        <%= repositorio.nombre %>
+                    </h1>
+
+                    <% if (repositorio.descripcion) { %>
+                        <p>
+                            <%= repositorio.descripcion %>
+                        </p>
+                        <% } %>
+                </div>
+
+                <a href="/repositorios/<%= repositorio.id_repositorio %>/carpetas/crear" class="btn btn-primary">
+                    + Nueva carpeta
+                </a>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>Carpetas</h2>
+
+                <% if (carpetas.length===0) { %>
+
+                    <div class="empty-state">
+
+                        <h3>No hay carpetas</h3>
+
+                        <p>
+                            Este repositorio todavía no tiene carpetas.
+                        </p>
+
+                        <a href="/repositorios/<%= repositorio.id_repositorio %>/carpetas/crear"
+                            class="btn btn-primary">
+                            Crear primera carpeta
+                        </a>
+
+                    </div>
+
+                    <% } else { %>
+
+                        <div class="repository-grid">
+
+                            <% carpetas.forEach(carpeta=> { %>
+
+                                <div class="repository-card">
+
+                                    <h3>📁 <%= carpeta.nombre %>
+                                    </h3>
+
+                                    <% if (carpeta.descripcion) { %>
+                                        <p>
+                                            <%= carpeta.descripcion %>
+                                        </p>
+                                        <% } else { %>
+                                            <p>Sin descripción</p>
+                                            <% } %>
+
+                                                <div class="repository-actions">
+
+                                                    <a href="/repositorios/<%= repositorio.id_repositorio %>/carpetas/<%= carpeta.id_carpeta %>"
+                                                        class="btn btn-primary">
+                                                        Acceder
+                                                    </a>
+
+                                                    <a href="/repositorios/<%= repositorio.id_repositorio %>/carpetas/<%= carpeta.id_carpeta %>/editar"
+                                                        class="btn btn-secondary">
+                                                        Editar
+                                                    </a>
+
+                                                    <form
+                                                        action="/repositorios/<%= repositorio.id_repositorio %>/carpetas/<%= carpeta.id_carpeta %>/eliminar"
+                                                        method="POST" style="display: inline;"
+                                                        onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta carpeta y todos sus documentos?');">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            Eliminar
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+
+                                </div>
+
+                                <% }) %>
+
+                        </div>
+
+                        <% } %>
+
+            </div>
+
+
+            <div style="margin-top: 20px;">
+
+                <a href="/repositorios" class="btn btn-secondary">
+                    Volver a repositorios
+                </a>
+
+            </div>
+
+        </main>
+
+        <%- include('../partials/footer') %>

@@ -30,40 +30,36 @@
                 Registrarse
             </a>
 
-            <a
-                href="/auth/login"
-                class="nav-button"
-            >
+            <a href="/auth/login" class="nav-button">
                 Iniciar sesión
             </a>
 
 
-        <% } else { %>
+            <% } else { %>
 
 
-            <a href="/perfil">
-                Mi perfil
-            </a>
-
-
-            <% if (usuario.rol === 'ADMINISTRADOR') { %>
-
-                <a href="/admin">
-                    Administración
+                <a href="/perfil">
+                    Mi perfil
+                </a>
+                <a href="/repositorios">
+                    Repositorios
                 </a>
 
-            <% } %>
+                <% if (usuario.rol==='ADMINISTRADOR' ) { %>
+
+                    <a href="/admin">
+                        Administración
+                    </a>
+
+                    <% } %>
 
 
-            <a
-                href="/auth/logout"
-                class="nav-button nav-button-outline"
-            >
-                Cerrar sesión
-            </a>
+                        <a href="/auth/logout" class="nav-button nav-button-outline">
+                            Cerrar sesión
+                        </a>
 
 
-        <% } %>
+                        <% } %>
 
     </nav>
 

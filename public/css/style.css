@@ -754,3 +754,111 @@ a:hover {
     }
 
 }
+/* ==========================================
+   REPOSITORIOS
+   ========================================== */
+
+.page-header {
+    max-width: 1100px;
+    margin: 20px auto 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+}
+
+.page-header h1 {
+    margin-bottom: 10px;
+    color: var(--azul-oscuro);
+}
+
+.page-header p {
+    color: var(--texto-secundario);
+}
+
+.repository-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.repository-card {
+    padding: 25px;
+    background-color: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+}
+
+.repository-card h2 {
+    margin-bottom: 10px;
+    color: var(--azul-principal);
+    font-size: 21px;
+}
+
+.repository-card p {
+    min-height: 50px;
+    margin-bottom: 25px;
+    color: var(--texto-secundario);
+    line-height: 1.6;
+}
+
+.repository-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.repository-actions form {
+    margin: 0;
+}
+
+.btn-danger {
+    background-color: #B42318;
+    color: var(--blanco);
+}
+
+.btn-danger:hover {
+    background-color: #8F1D15;
+    color: var(--blanco);
+}
+
+.empty-state {
+    max-width: 700px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.empty-state h2 {
+    margin-bottom: 12px;
+    color: var(--azul-principal);
+}
+
+.empty-state p {
+    margin-bottom: 25px;
+    color: var(--texto-secundario);
+    line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+
+    .repository-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .repository-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

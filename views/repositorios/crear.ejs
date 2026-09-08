@@ -1,0 +1,76 @@
+<%- include('../partials/head', { title: 'Crear repositorio' }) %>
+<%- include('../partials/navbar') %>
+
+<main>
+
+    <div class="form-container">
+
+        <div class="card">
+
+            <h1>Crear repositorio</h1>
+
+            <p class="form-description">
+                Crea un espacio para organizar tus documentos.
+            </p>
+
+            <form
+                action="/repositorios/crear"
+                method="POST"
+            >
+
+                <div class="form-group">
+
+                    <label for="nombre">
+                        Nombre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        class="form-control"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="descripcion">
+                        Descripción
+                    </label>
+
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        class="form-control"
+                        maxlength="255"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Crear repositorio
+                </button>
+
+                <a
+                    href="/repositorios"
+                    class="btn btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+<%- include('../partials/footer') %>

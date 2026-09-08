@@ -1,0 +1,108 @@
+<%- include('../partials/head', { title: 'Mis repositorios' }) %>
+<%- include('../partials/navbar') %>
+
+<main>
+
+    <div class="page-header">
+
+        <div>
+            <span class="section-label">
+                GESTIÓN DOCUMENTAL
+            </span>
+
+            <h1>Mis repositorios</h1>
+
+            <p>
+                Organiza tus documentos en espacios de trabajo independientes.
+            </p>
+        </div>
+
+        <a
+            href="/repositorios/crear"
+            class="btn btn-primary"
+        >
+            Crear repositorio
+        </a>
+
+    </div>
+
+
+    <% if (repositorios.length === 0) { %>
+
+        <div class="card empty-state">
+
+            <h2>No tienes repositorios todavía</h2>
+
+            <p>
+                Crea tu primer repositorio para comenzar a organizar
+                tus documentos.
+            </p>
+
+            <a
+                href="/repositorios/crear"
+                class="btn btn-primary"
+            >
+                Crear repositorio
+            </a>
+
+        </div>
+
+    <% } else { %>
+
+        <div class="repository-grid">
+
+            <% repositorios.forEach(repositorio => { %>
+
+                <article class="repository-card">
+
+                    <h2>
+                        <%= repositorio.nombre %>
+                    </h2>
+
+                    <p>
+                        <%= repositorio.descripcion || 'Sin descripción' %>
+                    </p>
+
+                    <div class="repository-actions">
+
+                        <a
+                            href="/repositorios/<%= repositorio.id_repositorio %>"
+                            class="btn btn-primary"
+                        >
+                            Acceder
+                        </a>
+
+                        <a
+                            href="/repositorios/editar/<%= repositorio.id_repositorio %>"
+                            class="btn btn-secondary"
+                        >
+                            Editar
+                        </a>
+
+                        <form
+                            action="/repositorios/eliminar/<%= repositorio.id_repositorio %>"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                            >
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+            <% }); %>
+
+        </div>
+
+    <% } %>
+
+</main>
+
+<%- include('../partials/footer') %>

@@ -4,7 +4,12 @@ COLLATE utf8mb4_unicode_ci;
 
 USE documind;
 SELECT * FROM usuarios;
+SELECT * FROM repositorios;
 SHOW DATABASES;
+
+update usuarios
+set rol = 'ADMINISTRADOR'
+where id_usuario = 4;
 
 CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
@@ -123,4 +128,11 @@ VALUES
 ('Contratos', 'Documentos contractuales', 1),
 ('Facturas', 'Documentos de facturación', 1),
 ('Informes', 'Informes empresariales', 1);
-select * from carpetas;
+select * from repositorios;
+ALTER TABLE documentos
+DROP FOREIGN KEY fk_documento_repositorio;
+ALTER TABLE documentos
+ADD CONSTRAINT fk_documento_repositorio
+    FOREIGN KEY (id_repositorio)
+    REFERENCES repositorios(id_repositorio)
+    ON DELETE CASCADE;

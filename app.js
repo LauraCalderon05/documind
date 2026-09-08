@@ -37,11 +37,17 @@ app.use((req, res, next) => {
 
 // Router de autenticación
 const authRouter = require('./routers/authRouter');
+const repositoryRouter = require('./routers/repositoryRouter');
+const folderRouter = require('./routers/folderRouter');
+
+
 const {
     requiereAutenticacion,
     requiereAdministrador
 } = require('./middleware/authMiddleware');
 app.use('/auth', authRouter);
+app.use('/repositorios', repositoryRouter);
+app.use('/', folderRouter);
 
 // Página principal
 app.get('/', (req, res) => {
