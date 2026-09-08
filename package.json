@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
-    },
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "express-session": "^1.19.0",
     "mammoth": "^1.12.2",
     "multer": "^2.3.0",
+    "mysql2": "^3.24.3",
     "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
