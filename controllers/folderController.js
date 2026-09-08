@@ -207,24 +207,55 @@ const accederCarpeta = async (req, res) => {
              AND r.id_usuario = ?
              AND c.estado = TRUE
              AND r.estado = TRUE`,
-            [idCarpeta, idRepositorio, idUsuario]
+            [
+                idCarpeta,
+                idRepositorio,
+                idUsuario
+            ]
         );
 
         if (carpetas.length === 0) {
-            return res.status(404).send('Carpeta no encontrada');
+            return res.status(404).send(
+                'Carpeta no encontrada'
+            );
         }
+
+        const [documentos] = await db.promise().query(
+            `SELECT
+        d.*,
+        p.estado AS estado_procesamiento
+     FROM documentos d
+     LEFT JOIN procesamientos p
+        ON d.id_documento = p.id_documento
+     WHERE d.id_carpeta = ?
+     AND d.id_repositorio = ?
+     AND d.id_usuario = ?
+     AND d.estado = TRUE
+     ORDER BY d.fecha_carga DESC`,
+            [
+                idCarpeta,
+                idRepositorio,
+                idUsuario
+            ]
+        );
 
         res.render('carpetas/detalle', {
             title: carpetas[0].nombre,
-            carpeta: carpetas[0]
+            carpeta: carpetas[0],
+            documentos
         });
 
     } catch (error) {
-        console.error('Error al acceder a la carpeta:', error);
-        res.status(500).send('Error al acceder a la carpeta');
+        console.error(
+            'Error al acceder a la carpeta:',
+            error
+        );
+
+        res.status(500).send(
+            'Error al acceder a la carpeta'
+        );
     }
 };
-
 
 module.exports = {
     mostrarCrearCarpeta,

@@ -39,6 +39,7 @@ app.use((req, res, next) => {
 const authRouter = require('./routers/authRouter');
 const repositoryRouter = require('./routers/repositoryRouter');
 const folderRouter = require('./routers/folderRouter');
+const documentRouter = require('./routers/documentRouter');
 
 
 const {
@@ -48,6 +49,7 @@ const {
 app.use('/auth', authRouter);
 app.use('/repositorios', repositoryRouter);
 app.use('/', folderRouter);
+app.use('/', documentRouter);
 
 // Página principal
 app.get('/', (req, res) => {

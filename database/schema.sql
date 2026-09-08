@@ -5,6 +5,7 @@ COLLATE utf8mb4_unicode_ci;
 USE documind;
 SELECT * FROM usuarios;
 SELECT * FROM repositorios;
+SELECT * FROM carpetas;
 SHOW DATABASES;
 
 update usuarios
@@ -135,4 +136,13 @@ ALTER TABLE documentos
 ADD CONSTRAINT fk_documento_repositorio
     FOREIGN KEY (id_repositorio)
     REFERENCES repositorios(id_repositorio)
+    ON DELETE CASCADE;
+    ALTER TABLE documentos
+DROP FOREIGN KEY fk_documento_carpeta;
+select * from documentos;
+select * from procesamientos;
+ALTER TABLE documentos
+ADD CONSTRAINT fk_documento_carpeta
+    FOREIGN KEY (id_carpeta)
+    REFERENCES carpetas(id_carpeta)
     ON DELETE CASCADE;

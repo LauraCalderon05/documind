@@ -27,14 +27,122 @@
                 <% } %>
 
                     <div class="card">
-                        <h2>Documentos</h2>
 
-                        <p>
-                            Aquí aparecerán los documentos almacenados
-                            en esta carpeta.
-                        </p>
+                        <div class="page-header">
+
+                            <div>
+                                <h2>Documentos</h2>
+
+                                <p>
+                                    Archivos almacenados en esta carpeta.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <form
+                            action="/repositorios/<%= carpeta.id_repositorio %>/carpetas/<%= carpeta.id_carpeta %>/documentos/subir"
+                            method="POST" enctype="multipart/form-data">
+
+                            <div class="form-group">
+
+                                <label for="documento">
+                                    Seleccionar documento
+                                </label>
+
+                                <input type="file" id="documento" name="documento" class="form-control"
+                                    accept=".pdf,.docx,.txt" required>
+
+                                <small>
+                                    Formatos permitidos: PDF, DOCX y TXT.
+                                    Tamaño máximo: 10 MB.
+                                </small>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                Subir documento
+                            </button>
+
+                        </form>
+
+
+                        <hr>
+
+
+                        <% if (documentos.length===0) { %>
+
+                            <div class="empty-state">
+
+                                <h3>No hay documentos</h3>
+
+                                <p>
+                                    Esta carpeta todavía no contiene documentos.
+                                </p>
+
+                            </div>
+
+                            <% } else { %>
+
+                                <div class="repository-grid">
+
+                                    <% documentos.forEach(documento=> { %>
+
+                                        <div class="repository-card">
+
+                                            <h3>
+                                                📄 <%= documento.nombre_original %>
+                                            </h3>
+
+                                            <p>
+                                                Tipo:
+                                                <%= documento.extension.toUpperCase() %>
+                                            </p>
+
+                                            <p>
+                                                Tamaño:
+                                                <%= (documento.tamano / 1024).toFixed(2) %> KB
+                                            </p>
+
+                                            <p>
+                                                Estado:
+                                                <%= documento.estado_procesamiento || 'PENDIENTE' %>
+                                            </p>
+
+                                            <div class="repository-actions">
+
+                                                <a href="/documentos/<%= documento.id_documento %>"
+                                                    class="btn btn-primary">
+                                                    Consultar
+                                                </a>
+
+                                                <a href="/documentos/<%= documento.id_documento %>/descargar"
+                                                    class="btn btn-secondary">
+                                                    Descargar
+                                                </a>
+
+                                                <form action="/documentos/<%= documento.id_documento %>/eliminar"
+                                                    method="POST" style="display: inline;"
+                                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar este documento?');">
+
+                                                    <button type="submit" class="btn btn-danger">
+                                                        Eliminar
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                        <% }) %>
+
+                                </div>
+
+                                <% } %>
+
                     </div>
-
                     <div style="margin-top: 20px;">
                         <a href="/repositorios/<%= carpeta.id_repositorio %>" class="btn btn-secondary">
                             Volver al repositorio
