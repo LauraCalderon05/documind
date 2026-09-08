@@ -1,0 +1,70 @@
+<header class="navbar">
+
+    <div class="navbar-logo">
+
+        <a href="/">
+
+            <span class="logo-main">
+                DocuMind
+            </span>
+
+            <span class="logo-subtitle">
+                Gestión y análisis documental
+            </span>
+
+        </a>
+
+    </div>
+
+
+    <nav class="navbar-menu">
+
+        <a href="/">
+            Inicio
+        </a>
+
+
+        <% if (!usuario) { %>
+
+            <a href="/auth/registro">
+                Registrarse
+            </a>
+
+            <a
+                href="/auth/login"
+                class="nav-button"
+            >
+                Iniciar sesión
+            </a>
+
+
+        <% } else { %>
+
+
+            <a href="/perfil">
+                Mi perfil
+            </a>
+
+
+            <% if (usuario.rol === 'ADMINISTRADOR') { %>
+
+                <a href="/admin">
+                    Administración
+                </a>
+
+            <% } %>
+
+
+            <a
+                href="/auth/logout"
+                class="nav-button nav-button-outline"
+            >
+                Cerrar sesión
+            </a>
+
+
+        <% } %>
+
+    </nav>
+
+</header>

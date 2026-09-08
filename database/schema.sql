@@ -3,7 +3,7 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE documind;
-
+SELECT * FROM usuarios;
 SHOW DATABASES;
 
 CREATE TABLE usuarios (
