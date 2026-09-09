@@ -1,8 +1,12 @@
 const db = require('../config/database');
 const path = require('path');
 const fs = require('fs');
+const {
+    procesarDocumento
+} = require('../services/processingService');
 
 
+// Subir documento
 // Subir documento
 const subirDocumento = async (req, res) => {
     try {
@@ -11,7 +15,9 @@ const subirDocumento = async (req, res) => {
         const idUsuario = req.session.usuario.id;
 
         if (!req.file) {
-            return res.status(400).send('Debes seleccionar un archivo.');
+            return res.status(400).send(
+                'Debes seleccionar un archivo.'
+            );
         }
 
         // Verificar que la carpeta pertenece al usuario
@@ -95,12 +101,24 @@ const subirDocumento = async (req, res) => {
             `Documento cargado correctamente: ${nombreOriginal}`
         );
 
+        // Iniciar procesamiento del documento
+        procesarDocumento(idDocumento).catch((error) => {
+            console.error(
+                'Error inesperado en el procesamiento:',
+                error
+            );
+        });
+
+        // Redirigir inmediatamente a la carpeta
         res.redirect(
             `/repositorios/${idRepositorio}/carpetas/${idCarpeta}`
         );
 
     } catch (error) {
-        console.error('Error al subir documento:', error);
+        console.error(
+            'Error al subir documento:',
+            error
+        );
 
         if (req.file && req.file.path) {
             try {
@@ -183,6 +201,7 @@ const listarDocumentos = async (req, res) => {
     }
 };
 // Consultar información de un documento
+// Consultar información de un documento
 const consultarDocumento = async (req, res) => {
     try {
         const idDocumento = req.params.idDocumento;
@@ -193,7 +212,8 @@ const consultarDocumento = async (req, res) => {
                 d.*,
                 c.nombre AS nombre_carpeta,
                 r.nombre AS nombre_repositorio,
-                p.estado AS estado_procesamiento
+                p.estado AS estado_procesamiento,
+                a.texto_extraido
              FROM documentos d
              INNER JOIN carpetas c
                  ON d.id_carpeta = c.id_carpeta
@@ -201,6 +221,8 @@ const consultarDocumento = async (req, res) => {
                  ON d.id_repositorio = r.id_repositorio
              LEFT JOIN procesamientos p
                  ON d.id_documento = p.id_documento
+             LEFT JOIN analisis_documentos a
+                 ON d.id_documento = a.id_documento
              WHERE d.id_documento = ?
              AND d.id_usuario = ?
              AND d.estado = TRUE`,

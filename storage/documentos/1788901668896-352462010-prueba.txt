@@ -1,0 +1,5 @@
+Este es un documento de prueba para DocuMind.
+
+El sistema debe extraer este texto y almacenarlo
+en la base de datos para posteriormente utilizarlo
+en el análisis mediante inteligencia artificial.

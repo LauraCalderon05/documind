@@ -146,3 +146,7 @@ ADD CONSTRAINT fk_documento_carpeta
     FOREIGN KEY (id_carpeta)
     REFERENCES carpetas(id_carpeta)
     ON DELETE CASCADE;
+ALTER TABLE analisis_documentos
+ADD CONSTRAINT uq_analisis_documento
+UNIQUE (id_documento);
+select * from analisis_documentos;
