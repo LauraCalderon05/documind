@@ -6,6 +6,10 @@ const {
     extraerTexto
 } = require('./documentService');
 
+const {
+    analizarDocumento
+} = require('./aiService');
+
 
 const procesarDocumento = async (idDocumento) => {
 
@@ -45,34 +49,67 @@ const procesarDocumento = async (idDocumento) => {
             documento.ruta_archivo
         );
 
-        // 4. Extraer el texto
+
+        // 4. Extraer el texto del documento
         const texto = await extraerTexto(
             rutaCompleta,
             documento.extension
         );
+        // 5. Verificar que el documento tenga texto
+        if (!texto || texto.trim().length === 0) {
+            throw new Error(
+                'El documento no contiene texto suficiente para ser analizado.'
+            );
+        }
+
+        // 5. Analizar el documento con Gemini
+        const resultadoIA = await analizarDocumento(texto);
 
 
-        // 5. Guardar el texto extraído
+        // 6. Actualizar la categoría del documento
         await db.promise().query(
-            `INSERT INTO analisis_documentos
-                (id_documento, texto_extraido)
-             VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE
-                texto_extraido = VALUES(texto_extraido),
-                fecha_analisis = CURRENT_TIMESTAMP`,
+            `UPDATE documentos
+             SET tipo_documento = ?
+             WHERE id_documento = ?`,
             [
-                idDocumento,
-                texto
+                resultadoIA.categoria,
+                idDocumento
             ]
         );
 
 
-        // 6. Cambiar estado a PROCESADO
+        // 7. Guardar texto, resumen e información relevante
+        await db.promise().query(
+            `INSERT INTO analisis_documentos
+                (
+                    id_documento,
+                    texto_extraido,
+                    resumen,
+                    informacion_relevante
+                )
+             VALUES (?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+                texto_extraido = VALUES(texto_extraido),
+                resumen = VALUES(resumen),
+                informacion_relevante = VALUES(informacion_relevante),
+                fecha_analisis = CURRENT_TIMESTAMP`,
+            [
+                idDocumento,
+                texto,
+                resultadoIA.resumen,
+                JSON.stringify(
+                    resultadoIA.informacion_relevante
+                )
+            ]
+        );
+
+
+        // 8. Cambiar estado a PROCESADO
         await db.promise().query(
             `UPDATE procesamientos
              SET estado = 'PROCESADO',
                  fecha_fin = NOW(),
-                 mensaje = 'Texto extraído correctamente.'
+                 mensaje = 'Documento procesado y analizado correctamente.'
              WHERE id_documento = ?`,
             [idDocumento]
         );
@@ -80,8 +117,13 @@ const procesarDocumento = async (idDocumento) => {
 
         return {
             exitoso: true,
-            texto
+            texto,
+            categoria: resultadoIA.categoria,
+            resumen: resultadoIA.resumen,
+            informacion_relevante:
+                resultadoIA.informacion_relevante
         };
+
 
     } catch (error) {
 
@@ -91,7 +133,7 @@ const procesarDocumento = async (idDocumento) => {
         );
 
 
-        // 7. Cambiar estado a ERROR
+        // 9. Cambiar estado a ERROR
         await db.promise().query(
             `UPDATE procesamientos
              SET estado = 'ERROR',
@@ -105,7 +147,7 @@ const procesarDocumento = async (idDocumento) => {
         );
 
 
-        // 8. Registrar el error
+        // 10. Registrar el error
         await db.promise().query(
             `INSERT INTO errores_procesamiento
                 (id_documento, mensaje)

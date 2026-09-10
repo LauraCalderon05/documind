@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+
+    <h1>Búsqueda de documentos</h1>
+
+    <form action="/documentos/buscar" method="GET">
+
+        <input
+            type="text"
+            name="q"
+            value="<%= consulta %>"
+            placeholder="Buscar dentro de los documentos..."
+            required
+        >
+
+        <button type="submit">
+            Buscar
+        </button>
+
+    </form>
+
+    <% if (mensaje) { %>
+
+        <p>
+            <%= mensaje %>
+        </p>
+
+    <% } else if (documentos.length === 0) { %>
+
+        <p>
+            No se encontraron documentos relacionados con
+            "<%= consulta %>".
+        </p>
+
+    <% } else { %>
+
+        <h2>
+            Resultados para:
+            "<%= consulta %>"
+        </h2>
+
+        <p>
+            Documentos encontrados:
+            <%= documentos.length %>
+        </p>
+
+        <% documentos.forEach(documento => { %>
+
+            <article>
+
+                <h3>
+                    <%= documento.nombre_original %>
+                </h3>
+
+                <p>
+                    Tipo:
+                    <%= documento.tipo_documento %>
+                </p>
+
+                <p>
+                    Repositorio:
+                    <%= documento.nombre_repositorio %>
+                </p>
+
+                <% if (documento.nombre_carpeta) { %>
+
+                    <p>
+                        Carpeta:
+                        <%= documento.nombre_carpeta %>
+                    </p>
+
+                <% } %>
+
+                <% if (documento.resumen) { %>
+
+                    <p>
+                        <%= documento.resumen %>
+                    </p>np
+
+                <% } %>
+
+                <a href="/documentos/<%= documento.id_documento %>">
+                    Ver documento
+                </a>
+
+            </article>
+
+            <hr>
+
+        <% }); %>
+
+    <% } %>
+
+</body>
+</html>

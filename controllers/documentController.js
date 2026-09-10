@@ -7,7 +7,6 @@ const {
 
 
 // Subir documento
-// Subir documento
 const subirDocumento = async (req, res) => {
     try {
         const idRepositorio = req.params.idRepositorio;
@@ -169,20 +168,23 @@ const listarDocumentos = async (req, res) => {
 
         // Consultar documentos
         const [documentos] = await db.promise().query(
-            `SELECT *
-             FROM documentos
-             WHERE id_carpeta = ?
-             AND id_repositorio = ?
-             AND id_usuario = ?
-             AND estado = TRUE
-             ORDER BY fecha_carga DESC`,
+            `SELECT
+        d.*,
+        p.estado AS estado_procesamiento
+     FROM documentos d
+     LEFT JOIN procesamientos p
+        ON d.id_documento = p.id_documento
+     WHERE d.id_carpeta = ?
+     AND d.id_repositorio = ?
+     AND d.id_usuario = ?
+     AND d.estado = TRUE
+     ORDER BY d.fecha_carga DESC`,
             [
                 idCarpeta,
                 idRepositorio,
                 idUsuario
             ]
         );
-
         res.render('carpetas/detalle', {
             title: carpetas[0].nombre,
             carpeta: carpetas[0],
@@ -200,7 +202,7 @@ const listarDocumentos = async (req, res) => {
         );
     }
 };
-// Consultar información de un documento
+
 // Consultar información de un documento
 const consultarDocumento = async (req, res) => {
     try {
@@ -209,23 +211,29 @@ const consultarDocumento = async (req, res) => {
 
         const [documentos] = await db.promise().query(
             `SELECT
-                d.*,
-                c.nombre AS nombre_carpeta,
-                r.nombre AS nombre_repositorio,
-                p.estado AS estado_procesamiento,
-                a.texto_extraido
-             FROM documentos d
-             INNER JOIN carpetas c
-                 ON d.id_carpeta = c.id_carpeta
-             INNER JOIN repositorios r
-                 ON d.id_repositorio = r.id_repositorio
-             LEFT JOIN procesamientos p
-                 ON d.id_documento = p.id_documento
-             LEFT JOIN analisis_documentos a
-                 ON d.id_documento = a.id_documento
-             WHERE d.id_documento = ?
-             AND d.id_usuario = ?
-             AND d.estado = TRUE`,
+        d.*,
+        c.nombre AS nombre_carpeta,
+        r.nombre AS nombre_repositorio,
+        p.estado AS estado_procesamiento,
+        p.fecha_inicio,
+        p.fecha_fin,
+        p.mensaje AS mensaje_procesamiento,
+        a.texto_extraido,
+        a.resumen,
+        a.informacion_relevante,
+        a.fecha_analisis
+     FROM documentos d
+     INNER JOIN carpetas c
+         ON d.id_carpeta = c.id_carpeta
+     INNER JOIN repositorios r
+         ON d.id_repositorio = r.id_repositorio
+     LEFT JOIN procesamientos p
+         ON d.id_documento = p.id_documento
+     LEFT JOIN analisis_documentos a
+         ON d.id_documento = a.id_documento
+     WHERE d.id_documento = ?
+     AND d.id_usuario = ?
+     AND d.estado = TRUE`,
             [
                 idDocumento,
                 idUsuario
@@ -237,10 +245,20 @@ const consultarDocumento = async (req, res) => {
                 'Documento no encontrado.'
             );
         }
+        const documento = documentos[0];
+
+        if (documento.informacion_relevante) {
+            try {
+                documento.informacion_relevante =
+                    JSON.parse(documento.informacion_relevante);
+            } catch (error) {
+                documento.informacion_relevante = {};
+            }
+        }
 
         res.render('documentos/detalle', {
-            title: documentos[0].nombre_original,
-            documento: documentos[0]
+            title: documento.nombre_original,
+            documento
         });
 
     } catch (error) {

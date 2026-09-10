@@ -1,0 +1,67 @@
+-- 1. Crear y seleccionar base de datos
+CREATE DATABASE IF NOT EXISTS transporte_mantenimiento;
+USE transporte_mantenimiento;
+
+-- 2. Crear tablas
+CREATE TABLE usuarios (
+    cedula VARCHAR(20) PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    rol ENUM('Administrador', 'Mecanico') NOT NULL,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE vehiculos (
+    id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
+    placa VARCHAR(20) UNIQUE NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    anio INT NOT NULL,
+    estado ENUM('Activo', 'Inactivo', 'En Mantenimiento') NOT NULL,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE mantenimientos (
+    id_mantenimiento INT AUTO_INCREMENT PRIMARY KEY,
+    id_vehiculo INT NOT NULL,
+    cedula_usuario VARCHAR(20) NOT NULL,
+    fecha DATE NOT NULL,
+    fecha_fin DATE NULL,
+    tipo VARCHAR(50) NOT NULL,
+    descripcion TEXT,
+    costo DECIMAL(10,2),
+    estado_mantenimiento ENUM('En proceso', 'Finalizado') DEFAULT 'En proceso',
+    FOREIGN KEY (id_vehiculo) REFERENCES vehiculos(id_vehiculo),
+    FOREIGN KEY (cedula_usuario) REFERENCES usuarios(cedula)
+);
+
+-- 3. Insertar 5 registros por tabla
+-- Usuarios
+INSERT INTO usuarios (cedula, nombre, apellido, correo, password, rol, activo) VALUES
+('1001', 'Admin', 'Uno', 'admin1@uts.edu.co', '12345', 'Administrador', TRUE),
+('1002', 'Admin', 'Dos', 'admin2@uts.edu.co', '12345', 'Administrador', TRUE),
+('2001', 'Mecanico', 'Uno', 'mecanico1@uts.edu.co', '12345', 'Mecanico', TRUE),
+('2002', 'Mecanico', 'Dos', 'mecanico2@uts.edu.co', '12345', 'Mecanico', TRUE),
+('2003', 'Mecanico', 'Tres', 'mecanico3@uts.edu.co', '12345', 'Mecanico', TRUE);
+
+-- Vehículos
+INSERT INTO vehiculos (placa, marca, modelo, anio, estado, activo) VALUES 
+('ABC-001', 'Toyota', 'Hiace', 2018, 'Activo', TRUE),
+('XYZ-002', 'Chevrolet', 'NQR', 2020, 'Activo', TRUE),
+('LMN-003', 'Renault', 'Duster', 2022, 'En Mantenimiento', TRUE),
+('OPQ-004', 'Ford', 'F-150', 2021, 'Activo', TRUE),
+('RST-005', 'Mazda', 'CX-5', 2023, 'Inactivo', TRUE);
+
+-- Mantenimientos
+INSERT INTO mantenimientos (id_vehiculo, cedula_usuario, fecha, fecha_fin, tipo, descripcion, costo, estado_mantenimiento) VALUES
+(1, '2001', '2026-05-01', NULL, 'Preventivo', 'Cambio de aceite', 250000, 'En proceso'),
+(2, '2002', '2026-05-05', '2026-05-06', 'Correctivo', 'Cambio de frenos', 450000, 'Finalizado'),
+(3, '2003', '2026-05-10', NULL, 'Preventivo', 'Revisión general', 150000, 'En proceso'),
+(4, '2001', '2026-05-15', '2026-05-16', 'Correctivo', 'Fuga de refrigerante', 320000, 'Finalizado'),
+(1, '2002', '2026-05-20', NULL, 'Preventivo', 'Alineación y balanceo', 180000, 'En proceso');
+
+-- 4. Privilegios
+GRANT ALL PRIVILEGES ON transporte_mantenimiento.* TO 'root'@'localhost';
+FLUSH PRIVILEGES;

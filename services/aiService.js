@@ -1,219 +1,223 @@
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen3:4b';
-const OLLAMA_TIMEOUT = 5 * 60 * 1000;
+const { GoogleGenAI } = require('@google/genai');
 
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+});
+
+const GEMINI_MODEL = 'gemini-3.5-flash-lite';
+
+
+/*
+ * Envía una consulta a Gemini.
+ */
 const consultarIA = async (prompt) => {
-
-    const controlador = new AbortController();
-
-    const tiempoEspera = setTimeout(() => {
-        controlador.abort();
-    }, OLLAMA_TIMEOUT);
-
 
     try {
 
-        const respuesta = await fetch(`${OLLAMA_URL}/api/generate`, {
-
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-                model: OLLAMA_MODEL,
-                prompt: prompt,
-                stream: false
-            }),
-
-            signal: controlador.signal
+        const interaction = await ai.interactions.create({
+            model: GEMINI_MODEL,
+            input: prompt,
+            store: false
         });
 
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                `Error de Ollama: ${respuesta.status} ${respuesta.statusText}`
-            );
+        if (!interaction.output_text) {
+            throw new Error('Gemini no devolvió una respuesta.');
         }
 
-
-        const datos = await respuesta.json();
-
-        return datos.response;
-
+        return interaction.output_text.trim();
 
     } catch (error) {
 
-        if (error.name === 'AbortError') {
-
-            throw new Error(
-                'La IA tardó demasiado tiempo en responder.'
-            );
-        }
-
-
         console.error(
-            'Error al comunicarse con Ollama:',
+            'Error al comunicarse con Gemini:',
             error
         );
-
 
         throw new Error(
             `No fue posible comunicarse con la IA: ${error.message}`
         );
-
-
-    } finally {
-
-        clearTimeout(tiempoEspera);
     }
 };
 
 
 /*
- * Clasifica el documento en una de las
- * categorías permitidas por el sistema.
+ * Analiza un documento completo.
+ *
+ * Gemini realiza en una sola consulta:
+ * - clasificación
+ * - resumen
+ * - extracción de información relevante
  */
-const clasificarDocumento = async (texto) => {
+const analizarDocumento = async (texto) => {
 
     const prompt = `
-Eres el sistema de clasificación documental de DocuMind.
+Eres el sistema inteligente de análisis documental de DocuMind.
 
-Analiza el siguiente documento y clasifícalo únicamente
-en una de estas categorías:
+Analiza el documento proporcionado y devuelve ÚNICAMENTE
+un objeto JSON válido.
+
+No utilices Markdown.
+No agregues explicaciones antes ni después del JSON.
+
+Las categorías permitidas son únicamente:
 
 CONTRATO
 FACTURA
 INFORME
+OTRO
 
-Responde únicamente con una de las tres palabras.
-No agregues explicaciones.
+Dependiendo de la categoría, extrae estos campos de Información Relevante:
 
-DOCUMENTO:
-${texto}
-`;
-
-    const respuesta = await consultarIA(prompt);
-
-    const categoria = respuesta
-        .trim()
-        .toUpperCase();
-
-    if (!['CONTRATO', 'FACTURA', 'INFORME'].includes(categoria)) {
-
-        throw new Error(
-            `La IA devolvió una categoría no válida: ${respuesta}`
-        );
-    }
-
-    return categoria;
-};
-
-
-/*
- * Genera un resumen del documento.
- */
-const generarResumen = async (texto) => {
-
-    const prompt = `
-Eres el sistema de análisis documental de DocuMind.
-
-Genera un resumen claro y conciso del siguiente documento.
-El resumen debe contener únicamente la información más importante.
-
-No inventes información que no aparezca en el documento.
-
-DOCUMENTO:
-${texto}
-`;
-
-    const respuesta = await consultarIA(prompt);
-
-    return respuesta.trim();
-};
-
-
-/*
- * Extrae información relevante dependiendo
- * de la categoría del documento.
- */
-const extraerInformacion = async (texto, categoria) => {
-
-    let campos = '';
-
-
-    if (categoria === 'CONTRATO') {
-
-        campos = `
+Si es CONTRATO:
 - Partes involucradas
 - Fecha
 - Duración
 - Valor
 - Obligaciones
-`;
 
-    } else if (categoria === 'FACTURA') {
-
-        campos = `
+Si es FACTURA:
 - Proveedor
 - Número
 - Fecha
 - Subtotal
 - Impuestos
 - Total
-`;
 
-    } else if (categoria === 'INFORME') {
-
-        campos = `
+Si es INFORME:
 - Título
 - Periodo
 - Responsable
 - Conclusiones
 - Indicadores
-`;
 
-    } else {
-
-        throw new Error(
-            `Categoría no válida para extracción: ${categoria}`
-        );
-    }
-
-
-    const prompt = `
-Eres el sistema de extracción de información
-del sistema DocuMind.
-
-El documento pertenece a la categoría:
-${categoria}
-
-Extrae únicamente los siguientes campos:
-
-${campos}
+Si es OTRO:
+- No extraigas campos específicos de contrato, factura o informe.
+- Genera únicamente un resumen general del documento.
+- informacion_relevante debe ser un objeto vacío.
 
 REGLAS:
+
 1. No inventes información.
 2. Utiliza únicamente información presente en el documento.
 3. Si un campo no aparece, escribe "No especificado".
-4. Mantén cada campo claramente identificado.
-5. No agregues campos diferentes a los solicitados.
+4. El resumen debe ser claro y conciso.
+5. Si el documento corresponde claramente a un contrato, clasifícalo como CONTRATO.
+6. Si el documento corresponde claramente a una factura, clasifícalo como FACTURA.
+7. Si el documento corresponde claramente a un informe, clasifícalo como INFORME.
+8. Si el documento no corresponde claramente a CONTRATO, FACTURA o INFORME, clasifícalo como OTRO.
+9. Nunca fuerces un documento a pertenecer a CONTRATO, FACTURA o INFORME.
+10. Si la categoría es OTRO, genera únicamente un resumen general y devuelve informacion_relevante como un objeto vacío.
+11. Devuelve únicamente el JSON solicitado.
+
+FORMATO OBLIGATORIO:
+
+{
+    "categoria": "CONTRATO | FACTURA | INFORME | OTRO",
+    "resumen": "Resumen del documento",
+    "informacion_relevante": {}
+}
 
 DOCUMENTO:
+
 ${texto}
 `;
 
-
     const respuesta = await consultarIA(prompt);
 
-    return respuesta.trim();
+    let resultado;
+
+    try {
+
+        resultado = JSON.parse(respuesta);
+
+    } catch (error) {
+
+        console.error(
+            'Respuesta recibida de Gemini:',
+            respuesta
+        );
+
+        throw new Error(
+            'Gemini no devolvió un JSON válido.'
+        );
+    }
+
+    const categoriasPermitidas = [
+        'CONTRATO',
+        'FACTURA',
+        'INFORME',
+        'OTRO'
+    ];
+
+    if (!categoriasPermitidas.includes(resultado.categoria)) {
+
+        throw new Error(
+            `La IA devolvió una categoría no válida: ${resultado.categoria}`
+        );
+    }
+
+    if (!resultado.resumen) {
+        resultado.resumen = 'No especificado';
+    }
+
+    if (!resultado.informacion_relevante) {
+        resultado.informacion_relevante = {};
+    }
+
+    return resultado;
+};
+
+
+/*
+ * Clasificación individual.
+ *
+ * Se mantiene para poder utilizarla en pruebas
+ * o en funcionalidades futuras.
+ */
+const clasificarDocumento = async (texto) => {
+
+    const resultado = await analizarDocumento(texto);
+
+    return resultado.categoria;
+};
+
+
+/*
+ * Generación individual del resumen.
+ *
+ * Se mantiene para compatibilidad con el código anterior.
+ */
+const generarResumen = async (texto) => {
+
+    const resultado = await analizarDocumento(texto);
+
+    return resultado.resumen;
+};
+
+
+/*
+ * Extracción individual de información.
+ *
+ * Se mantiene para compatibilidad con el código anterior.
+ */
+const extraerInformacion = async (texto, categoria) => {
+
+    const resultado = await analizarDocumento(texto);
+
+    if (resultado.categoria !== categoria) {
+
+        throw new Error(
+            `La IA clasificó el documento como ${resultado.categoria} y no como ${categoria}.`
+        );
+    }
+
+    return resultado.informacion_relevante;
 };
 
 
 module.exports = {
     consultarIA,
+    analizarDocumento,
     clasificarDocumento,
     generarResumen,
     extraerInformacion

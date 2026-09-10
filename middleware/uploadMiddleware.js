@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const iconv = require('iconv-lite');
 
 // Carpeta donde se almacenarán los documentos
 const carpetaDocumentos = path.join(
@@ -27,11 +28,19 @@ const storage = multer.diskStorage({
 
     filename: (req, file, cb) => {
 
-        const extension = path.extname(file.originalname).toLowerCase();
+        file.originalname = iconv
+            .decode(
+                Buffer.from(file.originalname, 'latin1'),
+                'utf8'
+            );
+
+        const extension = path
+            .extname(file.originalname)
+            .toLowerCase();
 
         const nombreBase = path
             .basename(file.originalname, extension)
-            .replace(/[^a-zA-Z0-9_-]/g, '_');
+            .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ_-]/g, '_');
 
         const nombreUnico =
             `${Date.now()}-${Math.round(Math.random() * 1E9)}-${nombreBase}${extension}`;

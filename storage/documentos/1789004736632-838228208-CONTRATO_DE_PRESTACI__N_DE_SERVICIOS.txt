@@ -1,0 +1,24 @@
+CONTRATO DE PRESTACIÓN DE SERVICIOS
+
+Entre las partes, ANDES TECNOLOGÍA S.A.S., identificada con NIT 901.456.789-1, en adelante EL CONTRATANTE, y Carlos Rodríguez Gómez, identificado con cédula de ciudadanía 1.234.567.890, en adelante EL CONTRATISTA, se celebra el presente contrato de prestación de servicios.
+
+FECHA DE CELEBRACIÓN: 9 de septiembre de 2026.
+
+DURACIÓN:
+El presente contrato tendrá una duración de seis (6) meses, contados a partir del 15 de septiembre de 2026 y hasta el 14 de marzo de 2027.
+
+VALOR:
+El valor total del contrato es de ocho millones cuatrocientos mil pesos colombianos ($8.400.000), que serán pagados en seis cuotas mensuales de un millón cuatrocientos mil pesos ($1.400.000).
+
+OBLIGACIONES DEL CONTRATISTA:
+1. Desarrollar y mantener el sistema web solicitado por EL CONTRATANTE.
+2. Entregar los avances del proyecto de acuerdo con el cronograma establecido.
+3. Informar oportunamente cualquier inconveniente que pueda afectar el desarrollo del proyecto.
+4. Mantener la confidencialidad de la información suministrada por EL CONTRATANTE.
+
+OBLIGACIONES DEL CONTRATANTE:
+1. Proporcionar la información necesaria para el desarrollo del proyecto.
+2. Revisar y aprobar los avances entregados por EL CONTRATISTA.
+3. Realizar los pagos establecidos en las fechas acordadas.
+
+Las partes manifiestan su aceptación de las condiciones establecidas en el presente contrato.

@@ -1,156 +1,222 @@
 <%- include('../partials/head', { title: documento.nombre_original }) %>
-<%- include('../partials/navbar') %>
+    <%- include('../partials/navbar') %>
 
-<main class="container">
+        <main class="container">
 
-    <div class="page-header">
+            <div class="page-header">
 
-        <div>
-            <h1><%= documento.nombre_original %></h1>
+                <div>
+                    <h1>
+                        <%= documento.nombre_original %>
+                    </h1>
 
-            <p>
-                Información del documento
-            </p>
-        </div>
+                    <p>
+                        Información del documento
+                    </p>
+                </div>
 
-    </div>
-
-
-    <!-- Información general -->
-
-    <div class="card">
-
-        <h2>Información general</h2>
-
-        <div class="form-group">
-            <strong>Nombre:</strong>
-            <%= documento.nombre_original %>
-        </div>
-
-        <div class="form-group">
-            <strong>Extensión:</strong>
-            <%= documento.extension.toUpperCase() %>
-        </div>
-
-        <div class="form-group">
-            <strong>Tamaño:</strong>
-            <%= (documento.tamano / 1024).toFixed(2) %> KB
-        </div>
-
-        <div class="form-group">
-            <strong>Repositorio:</strong>
-            <%= documento.nombre_repositorio %>
-        </div>
-
-        <div class="form-group">
-            <strong>Carpeta:</strong>
-            <%= documento.nombre_carpeta %>
-        </div>
-
-        <div class="form-group">
-            <strong>Fecha de carga:</strong>
-            <%= documento.fecha_carga %>
-        </div>
-
-        <div class="form-group">
-            <strong>Estado de procesamiento:</strong>
-            <%= documento.estado_procesamiento || 'PENDIENTE' %>
-        </div>
-
-        <div class="repository-actions">
-
-            <a
-                href="/documentos/<%= documento.id_documento %>/descargar"
-                class="btn btn-primary"
-            >
-                Descargar
-            </a>
-
-            <a
-                href="/repositorios/<%= documento.id_repositorio %>/carpetas/<%= documento.id_carpeta %>"
-                class="btn btn-secondary"
-            >
-                Volver a la carpeta
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- Texto extraído -->
-
-    <div class="card document-content-card">
-
-        <h2>Texto extraído</h2>
-
-        <% if (documento.estado_procesamiento === 'PROCESADO' && documento.texto_extraido) { %>
-
-            <div class="texto-extraido">
-                <%= documento.texto_extraido %>
             </div>
 
-        <% } else if (documento.estado_procesamiento === 'PROCESANDO') { %>
 
-            <p>
-                El documento está siendo procesado.
-                El texto estará disponible cuando finalice el procesamiento.
-            </p>
+            <!-- Información general -->
 
-        <% } else if (documento.estado_procesamiento === 'ERROR') { %>
+            <div class="card">
 
-            <p>
-                No fue posible extraer el texto de este documento.
-            </p>
+                <h2>Información general</h2>
 
-        <% } else { %>
+                <div class="form-group">
+                    <strong>Nombre:</strong>
+                    <%= documento.nombre_original %>
+                </div>
 
-            <p>
-                El documento todavía no ha sido procesado.
-            </p>
+                <div class="form-group">
+                    <strong>Extensión:</strong>
+                    <%= documento.extension.toUpperCase() %>
+                </div>
 
-        <% } %>
+                <div class="form-group">
+                    <strong>Tamaño:</strong>
+                    <%= (documento.tamano / 1024).toFixed(2) %> KB
+                </div>
 
-    </div>
+                <div class="form-group">
+                    <strong>Repositorio:</strong>
+                    <%= documento.nombre_repositorio %>
+                </div>
+
+                <div class="form-group">
+                    <strong>Carpeta:</strong>
+                    <%= documento.nombre_carpeta %>
+                </div>
+
+                <div class="form-group">
+                    <strong>Fecha de carga:</strong>
+                    <%= documento.fecha_carga %>
+                </div>
+
+                <div class="form-group">
+                    <strong>Estado de procesamiento:</strong>
+                    <%= documento.estado_procesamiento || 'PENDIENTE' %>
+                </div>
+                <div class="form-group">
+                    <strong>Tipo de documento:</strong>
+                    <%= documento.tipo_documento || 'PENDIENTE' %>
+                </div>
+
+                <div class="repository-actions">
+
+                    <a href="/documentos/<%= documento.id_documento %>/descargar" class="btn btn-primary">
+                        Descargar
+                    </a>
+
+                    <a href="/repositorios/<%= documento.id_repositorio %>/carpetas/<%= documento.id_carpeta %>"
+                        class="btn btn-secondary">
+                        Volver a la carpeta
+                    </a>
+
+                </div>
+
+            </div>
 
 
-    <!-- Espacio reservado para análisis de IA -->
+            <!-- Texto extraído -->
 
-    <div class="card document-content-card">
+            <div class="card document-content-card">
 
-        <h2>Resumen</h2>
+                <h2>Texto extraído</h2>
 
-        <p>
-            El resumen generado por inteligencia artificial
-            aparecerá aquí.
-        </p>
+                <% if (documento.estado_procesamiento==='PROCESADO' && documento.texto_extraido) { %>
 
-    </div>
+                    <div class="texto-extraido">
+                        <%= documento.texto_extraido %>
+                    </div>
+
+                    <% } else if (documento.estado_procesamiento==='PROCESANDO' ) { %>
+
+                        <p>
+                            El documento está siendo procesado.
+                            El texto estará disponible cuando finalice el procesamiento.
+                        </p>
+
+                        <% } else if (documento.estado_procesamiento==='ERROR' ) { %>
+
+                            <p>
+                                No fue posible extraer el texto de este documento.
+                            </p>
+
+                            <% } else if (documento.tipo_documento==='OTRO' &&
+                                documento.estado_procesamiento==='PROCESADO' ) { %>
+
+                                <p>
+                                    Este documento fue analizado correctamente, pero no pertenece
+                                    a las categorías principales de DocuMind, por lo que no se
+                                    extrajeron campos específicos.
+                                </p>
+
+                                <% } else { %>
+
+                                    <p>
+                                        No hay información relevante disponible.
+                                    </p>
+
+                                    <% } %>
+
+            </div>
 
 
-    <div class="card document-content-card">
+            <!-- Espacio reservado para análisis de IA -->
 
-        <h2>Información relevante</h2>
+            <div class="card document-content-card">
 
-        <p>
-            La información relevante extraída por DocuMind
-            aparecerá aquí.
-        </p>
+                <h2>Resumen generado por IA</h2>
 
-    </div>
+                <% if (documento.resumen) { %>
+
+                    <div class="ai-summary">
+                        <p>
+                            <%= documento.resumen %>
+                        </p>
+                    </div>
+
+                    <% } else if (documento.estado_procesamiento==='PROCESANDO' ) { %>
+
+                        <p>
+                            El documento está siendo analizado por DocuMind.
+                        </p>
+
+                        <% } else if (documento.estado_procesamiento==='ERROR' ) { %>
+
+                            <p>
+                                No fue posible generar el análisis del documento.
+                            </p>
+
+                            <% } else { %>
+
+                                <p>
+                                    El análisis todavía no está disponible.
+                                </p>
+
+                                <% } %>
+
+            </div>
 
 
-    <div class="card document-content-card">
+            <div class="card document-content-card">
 
-        <h2>Preguntar al documento</h2>
+                <h2>Información relevante</h2>
 
-        <p>
-            Próximamente podrás realizar preguntas sobre
-            el contenido de este documento.
-        </p>
+                <% if ( documento.informacion_relevante && Object.keys(documento.informacion_relevante).length> 0
+                    ) { %>
 
-    </div>
+                    <div class="informacion-relevante">
 
-</main>
+                        <% Object.entries(documento.informacion_relevante).forEach(([campo, valor])=> { %>
 
-<%- include('../partials/footer') %>
+                            <div class="dato-ia">
+
+                                <strong>
+                                    <%= campo %>
+                                </strong>
+
+                                <p>
+                                    <%= valor %>
+                                </p>
+
+                            </div>
+
+                            <% }) %>
+
+                    </div>
+
+                    <% } else if (documento.estado_procesamiento==='PROCESANDO' ) { %>
+
+                        <p>
+                            La información relevante estará disponible
+                            cuando finalice el análisis.
+                        </p>
+
+                        <% } else { %>
+
+                            <p>
+                                No hay información relevante disponible.
+                            </p>
+
+                            <% } %>
+
+            </div>
+
+
+            <div class="card document-content-card">
+
+                <h2>Preguntar al documento</h2>
+
+                <p>
+                    Próximamente podrás realizar preguntas sobre
+                    el contenido de este documento.
+                </p>
+
+            </div>
+
+        </main>
+
+        <%- include('../partials/footer') %>

@@ -150,3 +150,21 @@ ALTER TABLE analisis_documentos
 ADD CONSTRAINT uq_analisis_documento
 UNIQUE (id_documento);
 select * from analisis_documentos;
+
+/* prueba de IA */
+SELECT * FROM documentos;
+
+SELECT * FROM procesamientos;
+
+SELECT * FROM analisis_documentos;
+
+SELECT * FROM errores_procesamiento;
+
+ALTER TABLE documentos
+MODIFY tipo_documento ENUM(
+    'CONTRATO',
+    'FACTURA',
+    'INFORME',
+    'OTRO',
+    'PENDIENTE'
+) NOT NULL DEFAULT 'PENDIENTE';
