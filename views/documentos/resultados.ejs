@@ -1,0 +1,138 @@
+<%- include('../partials/head', { title: title }) %>
+<%- include('../partials/navbar') %>
+
+<main class="container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>
+                Búsqueda de documentos
+            </h1>
+
+            <p>
+                Busca información dentro del contenido de tus documentos.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Buscador -->
+
+    <div class="card">
+
+        <form action="/documentos/buscar" method="GET">
+
+            <div class="form-group">
+
+                <label for="q">
+                    Buscar dentro de los documentos
+                </label>
+
+                <input
+                    type="text"
+                    id="q"
+                    name="q"
+                    class="form-control"
+                    value="<%= termino %>"
+                    placeholder="Ejemplo: fecha de vencimiento"
+                    required
+                >
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Buscar
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Resultados -->
+
+    <% if (termino) { %>
+
+        <div class="card">
+
+            <h2>
+                Resultados de búsqueda
+            </h2>
+
+            <p>
+                Resultados para:
+                <strong>
+                    "<%= termino %>"
+                </strong>
+            </p>
+
+
+            <% if (documentos.length === 0) { %>
+
+                <div class="empty-state">
+
+                    <h3>
+                        No se encontraron documentos
+                    </h3>
+
+                    <p>
+                        No existen documentos procesados que contengan
+                        el término buscado.
+                    </p>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="repository-grid">
+
+                    <% documentos.forEach(documento => { %>
+
+                        <div class="repository-card">
+
+                            <h3>
+                                📄 <%= documento.nombre_original %>
+                            </h3>
+
+                            <p>
+                                Tipo de archivo:
+                                <%= documento.extension.toUpperCase() %>
+                            </p>
+
+                            <p>
+                                Tipo de documento:
+                                <%= documento.tipo_documento || 'PENDIENTE' %>
+                            </p>
+
+                            <p>
+                                Fecha de carga:
+                                <%= documento.fecha_carga %>
+                            </p>
+
+                            <div class="repository-actions">
+
+                                <a
+                                    href="/documentos/<%= documento.id_documento %>"
+                                    class="btn btn-primary">
+                                    Consultar
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    <% } %>
+
+</main>
+
+<%- include('../partials/footer') %>

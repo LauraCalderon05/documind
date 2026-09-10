@@ -4,9 +4,10 @@ const {
     subirDocumento,
     consultarDocumento,
     descargarDocumento,
-    eliminarDocumento
+    eliminarDocumento,
+    buscarDocumentos,
+    preguntarDocumento
 } = require('../controllers/documentController');
-
 const {
     requiereAutenticacion
 } = require('../middleware/authMiddleware');
@@ -18,8 +19,59 @@ const router = express.Router();
 router.post(
     '/repositorios/:idRepositorio/carpetas/:idCarpeta/documentos/subir',
     requiereAutenticacion,
-    upload.single('documento'),
+    (req, res, next) => {
+
+        upload.single('documento')(req, res, (error) => {
+
+            if (!error) {
+                return next();
+            }
+
+            console.error(
+                'Error durante la subida del archivo:',
+                error
+            );
+
+            let mensaje = 'No fue posible subir el archivo.';
+
+            if (error.code === 'LIMIT_FILE_SIZE') {
+
+                mensaje =
+                    'El archivo supera el tamaño máximo permitido de 10 MB.';
+
+            } else if (error.message) {
+
+                mensaje = error.message;
+
+            }
+
+            return res.status(400).render('error', {
+
+                title: 'Error al subir documento',
+
+                mensaje,
+
+                volver:
+                    `/repositorios/${req.params.idRepositorio}/carpetas/${req.params.idCarpeta}`
+
+            });
+
+        });
+
+    },
     subirDocumento
+);
+// Buscar documentos por contenido
+router.get(
+    '/documentos/buscar',
+    requiereAutenticacion,
+    buscarDocumentos
+);
+// Preguntar sobre un documento
+router.post(
+    '/documentos/:idDocumento/preguntar',
+    requiereAutenticacion,
+    preguntarDocumento
 );
 // Consultar documento
 router.get(

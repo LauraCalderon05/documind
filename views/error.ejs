@@ -1,0 +1,33 @@
+<%- include('./partials/head', { title: title || 'Error' }) %>
+<%- include('./partials/navbar') %>
+
+<main class="container">
+
+```
+<div class="card">
+
+    <div class="empty-state">
+
+        <h1>
+            No fue posible completar la operación
+        </h1>
+
+        <p>
+            <%= mensaje || 'Ocurrió un error inesperado.' %>
+        </p>
+
+        <a
+            href="<%= volver || '/' %>"
+            class="btn btn-secondary"
+        >
+            Volver
+        </a>
+
+    </div>
+
+</div>
+```
+
+</main>
+
+<%- include('./partials/footer') %>

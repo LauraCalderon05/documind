@@ -206,16 +206,103 @@
             </div>
 
 
-            <div class="card document-content-card">
+            <!-- Chat de preguntas al documento -->
 
-                <h2>Preguntar al documento</h2>
+            <% if ( documento.estado_procesamiento==='PROCESADO' && ['CONTRATO', 'FACTURA' , 'INFORME'
+                ].includes(documento.tipo_documento) ) { %>
 
-                <p>
-                    Próximamente podrás realizar preguntas sobre
-                    el contenido de este documento.
-                </p>
+                <!-- Botón flotante -->
 
-            </div>
+                <button type="button" id="boton-chat-documento" class="boton-chat-documento"
+                    aria-label="Abrir asistente de DocuMind">
+                    IA
+                </button>
+
+
+                <!-- Ventana del chat -->
+
+                <div id="ventana-chat-documento" class="ventana-chat-documento">
+
+                    <!-- Encabezado -->
+
+                    <div class="chat-header">
+
+                        <div>
+                            <strong>
+                                DocuMind IA
+                            </strong>
+
+                            <span>
+                                Pregunta sobre este documento
+                            </span>
+                        </div>
+
+                        <button type="button" id="cerrar-chat-documento" class="chat-cerrar" aria-label="Cerrar chat">
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <!-- Mensajes -->
+
+                    <div id="mensajes-chat-documento" class="mensajes-chat-documento">
+
+                        <div class="mensaje-chat mensaje-ia">
+
+                            <div class="mensaje-contenido">
+
+                                Puedes preguntarme sobre el contenido
+                                de este documento.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Indicador -->
+
+                    <div id="indicador-chat-documento" class="indicador-chat-documento">
+                        DocuMind está analizando tu pregunta...
+                    </div>
+
+
+                    <!-- Formulario -->
+
+                    <form id="formulario-chat-documento" action="/documentos/<%= documento.id_documento %>/preguntar"
+                        method="POST" class="formulario-chat-documento">
+
+                        <textarea id="pregunta-documento" name="pregunta" rows="2" placeholder="Escribe tu pregunta..."
+                            maxlength="1000" required></textarea>
+
+                        <button type="submit" class="boton-enviar-chat">
+                            Enviar
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <% } else if ( documento.tipo_documento==='OTRO' || documento.tipo_documento==='PENDIENTE' ) { %>
+
+                    <div class="card document-content-card">
+
+                        <h2>Preguntas al documento</h2>
+
+                        <p>
+                            Las preguntas en lenguaje natural están disponibles
+                            únicamente para documentos clasificados como
+                            contrato, factura o informe.
+                        </p>
+
+                    </div>
+
+                    <% } %>
+
+
+                        <script src="/js/chatDocumento.js" defer></script>
 
         </main>
 

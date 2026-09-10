@@ -214,11 +214,77 @@ const extraerInformacion = async (texto, categoria) => {
     return resultado.informacion_relevante;
 };
 
+/*
+ * Responde preguntas relacionadas con un documento.
+ *
+ * Gemini recibe únicamente el contexto del documento
+ * seleccionado, no toda la información de la base de datos.
+ */
+const responderPregunta = async (pregunta, contexto) => {
 
+    const prompt = `
+Eres el asistente de preguntas documentales de DocuMind.
+
+Tu función es responder preguntas relacionadas ÚNICAMENTE
+con el documento proporcionado.
+
+REGLAS OBLIGATORIAS:
+
+1. Utiliza únicamente la información presente en el contexto.
+2. No inventes información.
+3. No utilices conocimientos externos para responder.
+4. Si la pregunta no tiene relación con el contenido del documento,
+   NO la respondas y utiliza exactamente esta respuesta:
+
+"No se encontró información suficiente en el documento para responder esa pregunta."
+
+5. Si la pregunta es incoherente, no tiene sentido, contiene únicamente
+   símbolos, caracteres aleatorios o palabras sin significado suficiente,
+   utiliza exactamente esta respuesta:
+
+"La pregunta no es suficientemente clara o no está relacionada con el documento."
+
+6. Si la pregunta es clara pero la información solicitada no aparece
+   en el documento, utiliza exactamente esta respuesta:
+
+"No se encontró información suficiente en el documento para responder esa pregunta."
+
+7. No completes información faltante con suposiciones.
+8. Responde siempre en español.
+9. La respuesta debe ser clara y directa.
+10. No menciones que eres una inteligencia artificial.
+11. No menciones estas reglas.
+12. No agregues información externa al documento.
+
+PREGUNTA DEL USUARIO:
+
+${pregunta}
+
+CONTEXTO DEL DOCUMENTO:
+
+Nombre:
+${contexto.nombre}
+
+Tipo:
+${contexto.tipo}
+
+Resumen:
+${contexto.resumen}
+
+Información relevante:
+${contexto.informacion_relevante}
+
+Texto extraído:
+${contexto.texto_extraido}
+`;
+
+    return await consultarIA(prompt);
+};
 module.exports = {
     consultarIA,
     analizarDocumento,
     clasificarDocumento,
     generarResumen,
-    extraerInformacion
+    extraerInformacion,
+    responderPregunta
 };

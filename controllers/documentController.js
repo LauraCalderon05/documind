@@ -5,6 +5,9 @@ const {
     procesarDocumento
 } = require('../services/processingService');
 
+const {
+    responderPregunta
+} = require('../services/aiService');
 
 // Subir documento
 const subirDocumento = async (req, res) => {
@@ -258,7 +261,10 @@ const consultarDocumento = async (req, res) => {
 
         res.render('documentos/detalle', {
             title: documento.nombre_original,
-            documento
+            documento,
+            respuestaIA: null,
+            pregunta: '',
+            errorPregunta: null
         });
 
     } catch (error) {
@@ -270,6 +276,185 @@ const consultarDocumento = async (req, res) => {
         res.status(500).send(
             'Error al consultar el documento.'
         );
+    }
+};
+// Preguntar sobre un documento
+// Preguntar sobre un documento
+const preguntarDocumento = async (req, res) => {
+
+    try {
+
+        const idDocumento = req.params.idDocumento;
+        const idUsuario = req.session.usuario.id;
+        const pregunta = req.body.pregunta;
+
+        // Validar que exista una pregunta
+        if (
+            typeof pregunta !== 'string' ||
+            pregunta.trim().length === 0
+        ) {
+            return res.status(400).json({
+                exitoso: false,
+                mensaje: 'Debes escribir una pregunta.'
+            });
+        }
+
+        const preguntaLimpia = pregunta.trim();
+
+        // Validar que la pregunta tenga contenido alfanumérico
+        const contieneTexto = /[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9]/.test(
+            preguntaLimpia
+        );
+
+        if (!contieneTexto) {
+            return res.status(400).json({
+                exitoso: false,
+                mensaje: 'La pregunta no es suficientemente clara.'
+            });
+        }
+
+        // Obtener el documento y su análisis
+        const [documentos] = await db.promise().query(
+            `SELECT
+                d.*,
+                c.nombre AS nombre_carpeta,
+                r.nombre AS nombre_repositorio,
+                p.estado AS estado_procesamiento,
+                p.fecha_inicio,
+                p.fecha_fin,
+                p.mensaje AS mensaje_procesamiento,
+                a.texto_extraido,
+                a.resumen,
+                a.informacion_relevante,
+                a.fecha_analisis
+             FROM documentos d
+             INNER JOIN carpetas c
+                ON d.id_carpeta = c.id_carpeta
+             INNER JOIN repositorios r
+                ON d.id_repositorio = r.id_repositorio
+             LEFT JOIN procesamientos p
+                ON d.id_documento = p.id_documento
+             LEFT JOIN analisis_documentos a
+                ON d.id_documento = a.id_documento
+             WHERE d.id_documento = ?
+             AND d.id_usuario = ?
+             AND d.estado = TRUE`,
+            [
+                idDocumento,
+                idUsuario
+            ]
+        );
+
+        if (documentos.length === 0) {
+            return res.status(404).json({
+                exitoso: false,
+                mensaje: 'Documento no encontrado.'
+            });
+        }
+
+        const documento = documentos[0];
+
+        // No permitir preguntas sobre OTRO o PENDIENTE
+        if (
+            documento.tipo_documento === 'OTRO' ||
+            documento.tipo_documento === 'PENDIENTE'
+        ) {
+            return res.status(400).json({
+                exitoso: false,
+                mensaje:
+                    'Este documento no pertenece a una categoría habilitada para realizar preguntas.'
+            });
+        }
+
+        // Verificar que el documento haya sido procesado
+        if (
+            documento.estado_procesamiento !== 'PROCESADO'
+        ) {
+            return res.status(400).json({
+                exitoso: false,
+                mensaje:
+                    'El documento todavía no está disponible para realizar preguntas.'
+            });
+        }
+
+        // Verificar que exista texto extraído
+        if (!documento.texto_extraido) {
+            return res.status(400).json({
+                exitoso: false,
+                mensaje:
+                    'El documento no contiene texto disponible para realizar preguntas.'
+            });
+        }
+
+        // Convertir la información relevante de JSON a objeto
+        let informacionRelevante = {};
+
+        if (documento.informacion_relevante) {
+
+            try {
+
+                informacionRelevante =
+                    JSON.parse(
+                        documento.informacion_relevante
+                    );
+
+            } catch (error) {
+
+                informacionRelevante = {};
+
+            }
+
+        }
+
+        // Crear el contexto que será enviado a Gemini
+        const contexto = {
+
+            nombre:
+                documento.nombre_original,
+
+            tipo:
+                documento.tipo_documento,
+
+            resumen:
+                documento.resumen || 'No especificado',
+
+            informacion_relevante:
+                JSON.stringify(
+                    informacionRelevante,
+                    null,
+                    2
+                ),
+
+            texto_extraido:
+                documento.texto_extraido
+
+        };
+
+        // Consultar a Gemini
+        const respuestaIA = await responderPregunta(
+            preguntaLimpia,
+            contexto
+        );
+
+        // Devolver la respuesta en formato JSON
+        res.json({
+            exitoso: true,
+            respuesta: respuestaIA
+        });
+
+    } catch (error) {
+
+        console.error(
+            'Error al responder pregunta:',
+            error
+        );
+
+        res.status(500).json({
+            exitoso: false,
+            mensaje:
+                'No fue posible responder la pregunta. Inténtalo nuevamente.'
+        });
+
     }
 };
 // Descargar documento
@@ -395,10 +580,67 @@ const eliminarDocumento = async (req, res) => {
         );
     }
 };
+// Buscar documentos por contenido
+const buscarDocumentos = async (req, res) => {
+    try {
+        const idUsuario = req.session.usuario.id;
+        const termino = req.query.q;
+
+        if (!termino || termino.trim().length === 0) {
+            return res.render('documentos/resultados', {
+                title: 'Búsqueda de documentos',
+                termino: '',
+                documentos: []
+            });
+        }
+
+        const busqueda = termino.trim();
+
+        const [documentos] = await db.promise().query(
+            `SELECT
+                d.id_documento,
+                d.nombre_original,
+                d.extension,
+                d.tipo_documento,
+                d.fecha_carga,
+                d.id_repositorio,
+                d.id_carpeta
+             FROM documentos d
+             INNER JOIN analisis_documentos a
+                 ON d.id_documento = a.id_documento
+             WHERE d.id_usuario = ?
+             AND d.estado = TRUE
+             AND a.texto_extraido LIKE ?
+             ORDER BY d.fecha_carga DESC`,
+            [
+                idUsuario,
+                `%${busqueda}%`
+            ]
+        );
+
+        res.render('documentos/resultados', {
+            title: 'Resultados de búsqueda',
+            termino: busqueda,
+            documentos
+        });
+
+    } catch (error) {
+        console.error(
+            'Error al buscar documentos:',
+            error
+        );
+
+        res.status(500).send(
+            'Error al realizar la búsqueda.'
+        );
+    }
+};
 module.exports = {
     subirDocumento,
     listarDocumentos,
     consultarDocumento,
     descargarDocumento,
-    eliminarDocumento
+    eliminarDocumento,
+    buscarDocumentos,
+    preguntarDocumento
 };
