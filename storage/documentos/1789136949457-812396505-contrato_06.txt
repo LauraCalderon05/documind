@@ -1,0 +1,14 @@
+CONTRATO DE LICENCIA DE SOFTWARE
+
+Contrato: LIC-2026-211
+Licenciante: Sistemas Avanzados S.A.S.
+Licenciatario: Distribuciones Central S.A.S.
+Inicio: 1 de octubre de 2026
+Vigencia: 36 meses
+Valor anual: $9.600.000
+
+Objeto: otorgamiento de una licencia de uso para una plataforma de gestión comercial.
+
+La licencia permite el uso del software por hasta 50 usuarios. Incluye actualizaciones y soporte técnico durante la vigencia.
+
+El licenciatario no podrá modificar, distribuir ni comercializar el software sin autorización escrita.
