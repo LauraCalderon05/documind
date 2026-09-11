@@ -1,0 +1,15 @@
+FACTURA ELECTRÓNICA DE VENTA
+
+Número: FV-2026-1008
+Proveedor: Limpieza Profesional Nacional S.A.S.
+Fecha de emisión: 11 de septiembre de 2026
+Vencimiento: 11 de octubre de 2026
+Cliente: Distribuciones Central S.A.S.
+
+Servicio de limpieza mensual: $3.600.000
+Insumos de aseo: $850.000
+Servicio extraordinario: $450.000
+
+Subtotal: $4.900.000
+IVA 19%: $931.000
+Total: $5.831.000
