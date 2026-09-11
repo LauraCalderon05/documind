@@ -3,15 +3,10 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE documind;
-SELECT * FROM usuarios;
-SELECT * FROM repositorios;
-SELECT * FROM carpetas;
-SHOW DATABASES;
 
-update usuarios
-set rol = 'ADMINISTRADOR'
-where id_usuario = 4;
-
+-- =========================================================
+-- TABLA: usuarios
+-- =========================================================
 CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
@@ -23,6 +18,10 @@ CREATE TABLE usuarios (
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estado BOOLEAN NOT NULL DEFAULT TRUE
 );
+
+-- =========================================================
+-- TABLA: repositorios
+-- =========================================================
 CREATE TABLE repositorios (
     id_repositorio INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -35,6 +34,10 @@ CREATE TABLE repositorios (
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
 );
+
+-- =========================================================
+-- TABLA: carpetas
+-- =========================================================
 CREATE TABLE carpetas (
     id_carpeta INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -48,14 +51,25 @@ CREATE TABLE carpetas (
         REFERENCES repositorios(id_repositorio)
         ON DELETE CASCADE
 );
+
+-- =========================================================
+-- TABLA: documentos
+-- =========================================================
 CREATE TABLE documentos (
     id_documento INT AUTO_INCREMENT PRIMARY KEY,
     nombre_original VARCHAR(255) NOT NULL,
     nombre_archivo VARCHAR(255) NOT NULL,
     ruta_archivo VARCHAR(500) NOT NULL,
     extension VARCHAR(10) NOT NULL,
-    tipo_documento ENUM('CONTRATO', 'FACTURA', 'INFORME', 'PENDIENTE') 
-        NOT NULL DEFAULT 'PENDIENTE',
+
+    tipo_documento ENUM(
+        'CONTRATO',
+        'FACTURA',
+        'INFORME',
+        'OTRO',
+        'PENDIENTE'
+    ) NOT NULL DEFAULT 'PENDIENTE',
+
     id_repositorio INT NOT NULL,
     id_carpeta INT NULL,
     id_usuario INT NOT NULL,
@@ -65,21 +79,33 @@ CREATE TABLE documentos (
 
     CONSTRAINT fk_documento_repositorio
         FOREIGN KEY (id_repositorio)
-        REFERENCES repositorios(id_repositorio),
+        REFERENCES repositorios(id_repositorio)
+        ON DELETE CASCADE,
 
     CONSTRAINT fk_documento_carpeta
         FOREIGN KEY (id_carpeta)
         REFERENCES carpetas(id_carpeta)
-        ON DELETE SET NULL,
+        ON DELETE CASCADE,
+
     CONSTRAINT fk_documento_usuario
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
 );
+
+-- =========================================================
+-- TABLA: procesamientos
+-- =========================================================
 CREATE TABLE procesamientos (
     id_procesamiento INT AUTO_INCREMENT PRIMARY KEY,
     id_documento INT NOT NULL,
-    estado ENUM('PENDIENTE', 'PROCESANDO', 'PROCESADO', 'ERROR') 
-        NOT NULL DEFAULT 'PENDIENTE',
+
+    estado ENUM(
+        'PENDIENTE',
+        'PROCESANDO',
+        'PROCESADO',
+        'ERROR'
+    ) NOT NULL DEFAULT 'PENDIENTE',
+
     fecha_inicio DATETIME NULL,
     fecha_fin DATETIME NULL,
     mensaje VARCHAR(500),
@@ -89,9 +115,13 @@ CREATE TABLE procesamientos (
         REFERENCES documentos(id_documento)
         ON DELETE CASCADE
 );
+
+-- =========================================================
+-- TABLA: analisis_documentos
+-- =========================================================
 CREATE TABLE analisis_documentos (
     id_analisis INT AUTO_INCREMENT PRIMARY KEY,
-    id_documento INT NOT NULL,
+    id_documento INT NOT NULL UNIQUE,
     texto_extraido LONGTEXT,
     resumen TEXT,
     informacion_relevante LONGTEXT,
@@ -102,6 +132,10 @@ CREATE TABLE analisis_documentos (
         REFERENCES documentos(id_documento)
         ON DELETE CASCADE
 );
+
+-- =========================================================
+-- TABLA: errores_procesamiento
+-- =========================================================
 CREATE TABLE errores_procesamiento (
     id_error INT AUTO_INCREMENT PRIMARY KEY,
     id_documento INT NOT NULL,
@@ -113,58 +147,3 @@ CREATE TABLE errores_procesamiento (
         REFERENCES documentos(id_documento)
         ON DELETE CASCADE
 );
-INSERT INTO usuarios
-(nombre, apellido, email, password, telefono, rol)
-VALUES
-('Administrador', 'DocuMind', 'admin@documind.local', 'TEMPORAL', '3000000000', 'ADMINISTRADOR'),
-('Usuario', 'Prueba', 'usuario@documind.local', 'TEMPORAL', '3000000001', 'USUARIO');
-INSERT INTO repositorios
-(nombre, descripcion, id_usuario)
-VALUES
-('Repositorio Empresarial', 'Repositorio principal para documentos de prueba', 1),
-('Documentos de Prueba', 'Repositorio destinado a pruebas del sistema', 2);
-INSERT INTO carpetas
-(nombre, descripcion, id_repositorio)
-VALUES
-('Contratos', 'Documentos contractuales', 1),
-('Facturas', 'Documentos de facturación', 1),
-('Informes', 'Informes empresariales', 1);
-select * from repositorios;
-ALTER TABLE documentos
-DROP FOREIGN KEY fk_documento_repositorio;
-ALTER TABLE documentos
-ADD CONSTRAINT fk_documento_repositorio
-    FOREIGN KEY (id_repositorio)
-    REFERENCES repositorios(id_repositorio)
-    ON DELETE CASCADE;
-    ALTER TABLE documentos
-DROP FOREIGN KEY fk_documento_carpeta;
-select * from documentos;
-select * from procesamientos;
-ALTER TABLE documentos
-ADD CONSTRAINT fk_documento_carpeta
-    FOREIGN KEY (id_carpeta)
-    REFERENCES carpetas(id_carpeta)
-    ON DELETE CASCADE;
-ALTER TABLE analisis_documentos
-ADD CONSTRAINT uq_analisis_documento
-UNIQUE (id_documento);
-select * from analisis_documentos;
-
-/* prueba de IA */
-SELECT * FROM documentos;
-
-SELECT * FROM procesamientos;
-
-SELECT * FROM analisis_documentos;
-
-SELECT * FROM errores_procesamiento;
-
-ALTER TABLE documentos
-MODIFY tipo_documento ENUM(
-    'CONTRATO',
-    'FACTURA',
-    'INFORME',
-    'OTRO',
-    'PENDIENTE'
-) NOT NULL DEFAULT 'PENDIENTE';
