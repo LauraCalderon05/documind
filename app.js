@@ -40,14 +40,14 @@ const authRouter = require('./routers/authRouter');
 const repositoryRouter = require('./routers/repositoryRouter');
 const folderRouter = require('./routers/folderRouter');
 const documentRouter = require('./routers/documentRouter');
-
-
+const dashboardRouter = require('./routers/dashboardRouter');
 
 const {
     requiereAutenticacion,
     requiereAdministrador
 } = require('./middleware/authMiddleware');
 app.use('/auth', authRouter);
+app.use('/', dashboardRouter);
 app.use('/repositorios', repositoryRouter);
 app.use('/', folderRouter);
 app.use('/', documentRouter);
@@ -63,30 +63,14 @@ app.get('/', (req, res) => {
 // Ruta temporal para comprobar que la autenticación funciona
 app.get('/perfil', requiereAutenticacion, (req, res) => {
 
-    res.send(`
-        <h1>Perfil</h1>
+    res.render('perfil', {
+        title: 'Mi perfil'
+    });
 
-        <p>Bienvenido, ${req.session.usuario.nombre}</p>
-
-        <p>Correo: ${req.session.usuario.email}</p>
-
-        <p>Rol: ${req.session.usuario.rol}</p>
-
-        <a href="/auth/logout">Cerrar sesión</a>
-    `);
 });
 
 
-app.get('/admin', requiereAdministrador, (req, res) => {
 
-    res.send(`
-        <h1>Panel de administrador</h1>
-
-        <p>Bienvenido administrador, ${req.session.usuario.nombre}</p>
-
-        <a href="/auth/logout">Cerrar sesión</a>
-    `);
-});
 
 // Iniciar servidor
 app.listen(PORT, () => {

@@ -1,0 +1,60 @@
+<%- include('./partials/head', { title: title }) %>
+<%- include('./partials/navbar') %>
+
+<main class="container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Mi perfil</h1>
+
+            <p>
+                Información de la cuenta actualmente autenticada.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="card profile-card">
+
+        <h2>Información personal</h2>
+
+        <div class="profile-data">
+
+            <div>
+                <strong>Nombre</strong>
+                <p><%= usuario.nombre %> <%= usuario.apellido %></p>
+            </div>
+
+            <div>
+                <strong>Correo electrónico</strong>
+                <p><%= usuario.email %></p>
+            </div>
+
+            <div>
+                <strong>Rol</strong>
+                <p><%= usuario.rol %></p>
+            </div>
+
+            <div>
+                <strong>Fecha de registro</strong>
+                <p><%= usuario.fecha_registro %></p>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+
+            <a
+                href="/auth/logout"
+                class="btn btn-primary">
+                Cerrar sesión
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<%- include('./partials/footer') %>

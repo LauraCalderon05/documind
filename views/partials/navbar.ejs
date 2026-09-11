@@ -38,31 +38,29 @@
             <% } else { %>
 
 
-                <a href="/perfil">
-                    Mi perfil
-                </a>
-                <a href="/repositorios">
-                    Repositorios
-                </a>
-                <a href="/documentos/buscar">
-                    Buscar documentos
-                </a>
+                <a href="/perfil">Mi perfil</a>
 
-                <% if (usuario.rol==='ADMINISTRADOR' ) { %>
-
-                    <a href="/admin">
-                        Administración
-                    </a>
-
-                    <% } %>
-
-
-                        <a href="/auth/logout" class="nav-button nav-button-outline">
-                            Cerrar sesión
+               
+                        <a href="/repositorios">
+                            Repositorios
+                        </a>
+                        <a href="/documentos/buscar">
+                            Buscar documentos
                         </a>
 
+                        <% if (usuario.rol==='ADMINISTRADOR' ) { %>
 
-                        <% } %>
+                            <a href="/dashboard">Dashboard</a>
+
+                            <% } %>
+
+
+                                <a href="/auth/logout" class="nav-button nav-button-outline">
+                                    Cerrar sesión
+                                </a>
+
+
+                                <% } %>
 
     </nav>
 
