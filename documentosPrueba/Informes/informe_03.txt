@@ -1,0 +1,19 @@
+INFORME DE SOPORTE TÉCNICO
+
+Periodo: agosto de 2026
+Responsable: Carlos Eduardo Méndez
+
+El área recibió 126 incidentes técnicos. Se solucionaron 118 y quedaron 8 pendientes.
+
+Distribución:
+Hardware: 34 incidentes
+Software: 52 incidentes
+Redes: 28 incidentes
+Accesos: 12 incidentes
+
+Tiempo promedio de respuesta: 3,4 horas.
+
+La mayor cantidad de incidentes correspondió a problemas de software.
+
+Recomendación:
+Realizar capacitaciones sobre las aplicaciones utilizadas con mayor frecuencia.

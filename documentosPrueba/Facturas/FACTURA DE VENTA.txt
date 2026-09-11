@@ -1,0 +1,51 @@
+FACTURA DE VENTA
+
+Número de factura: FV-2026-00857
+
+PROVEEDOR:
+Tecnología Digital Colombia S.A.S.
+NIT: 900.789.123-4
+Dirección: Carrera 27 # 45-18, Bucaramanga, Santander
+
+CLIENTE:
+Andes Soluciones Empresariales S.A.S.
+NIT: 901.456.789-1
+
+FECHA DE EMISIÓN:
+8 de septiembre de 2026
+
+DETALLE DE PRODUCTOS:
+
+1. Computador portátil empresarial
+Cantidad: 2
+Precio unitario: $3.200.000
+Subtotal: $6.400.000
+
+2. Monitor profesional de 24 pulgadas
+Cantidad: 2
+Precio unitario: $850.000
+Subtotal: $1.700.000
+
+3. Teclado y mouse inalámbricos
+Cantidad: 2
+Precio unitario: $180.000
+Subtotal: $360.000
+
+SUBTOTAL:
+$8.460.000
+
+IMPUESTOS:
+IVA 19%: $1.607.400
+
+TOTAL:
+$10.067.400
+
+FORMA DE PAGO:
+Transferencia bancaria
+
+FECHA LÍMITE DE PAGO:
+30 de septiembre de 2026
+
+OBSERVACIONES:
+
+Los productos cuentan con una garantía de doce meses a partir de la fecha de entrega.

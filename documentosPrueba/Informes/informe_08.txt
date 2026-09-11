@@ -1,0 +1,20 @@
+INFORME DE SEGURIDAD INFORMÁTICA
+
+Periodo: agosto de 2026
+Área: Tecnología
+Responsable: Sebastián Ramírez
+
+Durante el periodo se registraron 37 eventos de seguridad.
+
+29 fueron clasificados como eventos de bajo riesgo, 7 como riesgo medio y 1 como riesgo alto.
+
+No se identificaron pérdidas de información.
+
+Acciones realizadas:
+- Actualización de sistemas.
+- Revisión de cuentas de usuario.
+- Cambio de credenciales administrativas.
+- Análisis de registros de acceso.
+
+Conclusión:
+Los controles aplicados permitieron mantener la operación sin incidentes críticos.

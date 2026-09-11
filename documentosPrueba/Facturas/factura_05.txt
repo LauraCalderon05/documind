@@ -1,0 +1,14 @@
+FACTURA ELECTRÓNICA DE VENTA
+
+Número: FV-2026-1005
+Proveedor: Seguridad Integral Santander S.A.S.
+Fecha de emisión: 8 de septiembre de 2026
+Vencimiento: 8 de octubre de 2026
+Cliente: Industrias del Oriente S.A.S.
+
+Servicio de vigilancia mensual: $6.400.000
+Servicio de monitoreo: $1.200.000
+
+Subtotal: $7.600.000
+IVA 19%: $1.444.000
+Total: $9.044.000

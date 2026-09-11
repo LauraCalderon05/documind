@@ -1,0 +1,16 @@
+FACTURA ELECTRÓNICA DE VENTA
+
+Número: FV-2026-1004
+Proveedor: Muebles Corporativos del Caribe S.A.S.
+Fecha de emisión: 7 de septiembre de 2026
+Vencimiento: 7 de octubre de 2026
+Cliente: Fundación Progreso Regional
+
+Detalle:
+8 escritorios ejecutivos — $850.000 c/u
+8 sillas ergonómicas — $620.000 c/u
+2 archivadores metálicos — $480.000 c/u
+
+Subtotal: $11.920.000
+IVA 19%: $2.264.800
+Total: $14.184.800

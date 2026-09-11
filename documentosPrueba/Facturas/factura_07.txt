@@ -1,0 +1,15 @@
+FACTURA ELECTRÓNICA DE VENTA
+
+Número: FV-2026-1007
+Proveedor: Transporte Nacional de Carga S.A.S.
+Fecha de emisión: 10 de septiembre de 2026
+Vencimiento: 10 de octubre de 2026
+Cliente: Alimentos Sierra S.A.S.
+
+Transporte de mercancía: $4.200.000
+Seguro de carga: $380.000
+Servicio de almacenamiento: $720.000
+
+Subtotal: $5.300.000
+IVA 19%: $1.007.000
+Total: $6.307.000
